@@ -1,7 +1,7 @@
 #[cfg(target_os = "windows")]
 use std::ffi::{OsStr, OsString};
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 use crate::platform::SysfsPath;
 
 use crate::{Device, Error};
@@ -22,10 +22,10 @@ pub struct DeviceId(pub(crate) crate::platform::DeviceId);
 ///     * macOS: `registry_id`, `location_id`
 #[derive(Clone)]
 pub struct DeviceInfo {
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "android"))]
     pub(crate) path: SysfsPath,
 
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "android"))]
     pub(crate) busnum: u8,
 
     #[cfg(target_os = "windows")]
@@ -83,7 +83,7 @@ impl DeviceInfo {
             DeviceId(self.devinst)
         }
 
-        #[cfg(target_os = "linux")]
+        #[cfg(any(target_os = "linux", target_os = "android"))]
         {
             DeviceId(crate::platform::DeviceId {
                 bus: self.busnum,
@@ -97,16 +97,40 @@ impl DeviceInfo {
         }
     }
 
+    #[cfg(any(target_os = "linux", target_os = "android"))]
+    fn create_device_info(path: SysfsPath) -> DeviceInfo {
+        DeviceInfo {
+            path,
+            busnum: 0, // Zero as default
+            bus_id: String::new(), // Empty string as default
+            device_address: 0, // Zero as default
+            port_chain: Vec::new(), // Empty vector
+            vendor_id: 0, // Zero as default
+            product_id: 0, // Zero as default
+            device_version: 0, // Zero as default
+            class: 0, // Zero as default
+            subclass: 0, // Zero as default
+            protocol: 0, // Zero as default
+            max_packet_size_0: 0, // Zero as default
+            speed: None, // None as default
+            manufacturer_string: None, // None as default
+            product_string: None, // None as default
+            serial_number: None, // None as default
+            interfaces: Vec::new(), // Empty vector
+        }
+    }
+
+
     /// *(Linux-only)* Sysfs path for the device.
     #[doc(hidden)]
     #[deprecated = "use `sysfs_path()` instead"]
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "android"))]
     pub fn path(&self) -> &SysfsPath {
         &self.path
     }
 
     /// *(Linux-only)* Sysfs path for the device.
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "android"))]
     pub fn sysfs_path(&self) -> &std::path::Path {
         &self.path.0
     }
@@ -114,7 +138,7 @@ impl DeviceInfo {
     /// *(Linux-only)* Bus number.
     ///
     /// On Linux, the `bus_id` is an integer and this provides the value as `u8`.
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "android"))]
     pub fn busnum(&self) -> u8 {
         self.busnum
     }
@@ -311,7 +335,7 @@ impl std::fmt::Debug for DeviceInfo {
             .field("product_string", &self.product_string)
             .field("serial_number", &self.serial_number);
 
-        #[cfg(target_os = "linux")]
+        #[cfg(any(target_os = "linux", target_os = "android"))]
         {
             s.field("sysfs_path", &self.path);
             s.field("busnum", &self.busnum);
