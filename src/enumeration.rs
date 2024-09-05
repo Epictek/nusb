@@ -98,8 +98,8 @@ impl DeviceInfo {
     }
 
     #[cfg(any(target_os = "linux", target_os = "android"))]
-    pub fn create_device_info(pathBuf: PathBuf) -> DeviceInfo {
-        let path = SysfsPath(pathBuf);
+    pub fn create_device_info(path_buf: PathBuf) -> DeviceInfo {
+        let path = SysfsPath(path_buf);
         DeviceInfo {
             path,
             busnum: 0, // Zero as default
