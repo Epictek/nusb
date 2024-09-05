@@ -14,7 +14,7 @@ fn main() {
     let device = di.open().unwrap();
 
     // Linux can make control transfers without claiming an interface
-    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    #[cfg(any(target_os = "linux", target_os = "macos", target_os = "android"))]
     {
         let result = device.control_out_blocking(
             Control {
