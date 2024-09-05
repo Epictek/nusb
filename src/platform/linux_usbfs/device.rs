@@ -48,7 +48,7 @@ impl LinuxDevice {
     pub(crate) fn from_device_info(d: &DeviceInfo) -> Result<Arc<LinuxDevice>, Error> {
         let busnum = d.busnum();
         let devnum = d.device_address();
-        let active_config = d.path.read_attr("bConfigurationValue")?;
+        // let active_config = d.path.read_attr("bConfigurationValue")?;
 
         let path = PathBuf::from(format!("/dev/bus/usb/{busnum:03}/{devnum:03}"));
         let fd = rustix::fs::open(&path, OFlags::RDWR | OFlags::CLOEXEC, Mode::empty())
@@ -76,7 +76,8 @@ impl LinuxDevice {
                 events_id,
                 descriptors,
                 sysfs: Some(d.path.clone()),
-                active_config: AtomicU8::new(active_config),
+                // active_config: AtomicU8::new(active_config),
+                active_config: AtomicU8::new(0),
             }
         });
 

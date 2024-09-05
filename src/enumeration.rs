@@ -98,13 +98,13 @@ impl DeviceInfo {
     }
 
     #[cfg(any(target_os = "linux", target_os = "android"))]
-    pub fn create_device_info(path_buf: PathBuf) -> DeviceInfo {
+    pub fn create_device_info(path_buf: PathBuf, busnum: u8, device_address: u8) -> DeviceInfo {
         let path = SysfsPath(path_buf);
         DeviceInfo {
             path,
-            busnum: 0, // Zero as default
+            busnum, // Zero as default
             bus_id: String::new(), // Empty string as default
-            device_address: 0, // Zero as default
+            device_address, // Zero as default
             port_chain: Vec::new(), // Empty vector
             vendor_id: 0, // Zero as default
             product_id: 0, // Zero as default
