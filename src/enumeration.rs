@@ -1,6 +1,6 @@
 #[cfg(target_os = "windows")]
 use std::ffi::{OsStr, OsString};
-
+use std::path::PathBuf;
 #[cfg(any(target_os = "linux", target_os = "android"))]
 use crate::platform::SysfsPath;
 
@@ -98,7 +98,8 @@ impl DeviceInfo {
     }
 
     #[cfg(any(target_os = "linux", target_os = "android"))]
-    fn create_device_info(path: SysfsPath) -> DeviceInfo {
+    pub fn create_device_info(pathBuf: PathBuf) -> DeviceInfo {
+        let path = SysfsPath(pathBuf);
         DeviceInfo {
             path,
             busnum: 0, // Zero as default
